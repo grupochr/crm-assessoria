@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRM SDR · CHR Assessoria Comercial</title>
+<style>
+:root{
+  --navy:#16243E; --navy2:#1F3A5F; --gold:#B8954A; --goldf:#F4ECD8;
+  --blue:#DCE6F1; --bg:#F4F6FA; --line:#D9DEE7; --ink:#222; --muted:#667;
+  --green:#D8EAD3; --greent:#1E5631; --redf:#F7D4D4; --redt:#C0392B;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink);font-size:14px}
+header{background:var(--navy);color:#fff;padding:14px 22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;border-bottom:4px solid var(--gold)}
+header h1{font-size:17px;margin:0;letter-spacing:.5px}
+header .sub{font-size:12px;color:#cdd6e6}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .logo{height:46px;width:auto;flex:none}
+nav{background:var(--navy2);display:flex;gap:2px;padding:0 14px;flex-wrap:wrap}
+nav button{background:transparent;border:0;color:#cdd6e6;padding:12px 18px;cursor:pointer;font-size:14px;font-weight:bold;border-bottom:3px solid transparent}
+nav button.active{color:#fff;border-bottom:3px solid var(--gold)}
+nav button:hover{color:#fff}
+main{padding:18px 22px;max-width:1280px;margin:0 auto}
+.hidden{display:none}
+h2{color:var(--navy);font-size:17px;border-bottom:2px solid var(--gold);padding-bottom:6px;margin:6px 0 16px}
+.tag{font-size:11px;color:var(--gold);font-weight:bold;text-transform:uppercase;letter-spacing:.5px;margin:18px 0 6px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:8px;padding:14px 16px}
+.card .lbl{font-size:12px;color:var(--muted)}
+.card .val{font-size:26px;font-weight:bold;color:var(--navy);margin-top:4px}
+.card.hl{background:var(--goldf);border-color:var(--gold)}
+.card.hl .val{color:var(--navy)}
+.card.warn .val{color:var(--redt)}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:8px}
+.mini table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.mini td{padding:7px 12px;border-bottom:1px solid var(--line);font-size:13px}
+.mini td:last-child{text-align:right;font-weight:bold;color:var(--navy)}
+.mini tr:last-child td{border-bottom:0}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.toolbar input[type=text],.toolbar select{padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit}
+.toolbar input[type=text]{min-width:200px}
+.spacer{flex:1}
+button.btn{background:var(--navy);color:#fff;border:0;padding:9px 16px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:bold}
+button.btn:hover{background:var(--navy2)}
+button.btn.gold{background:var(--gold)}
+button.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+table.grid{border-collapse:collapse;width:100%;min-width:1100px;font-size:13px}
+table.grid th{background:var(--navy2);color:#fff;padding:9px 10px;text-align:left;position:sticky;top:0;font-size:12px;white-space:nowrap}
+table.grid td{padding:8px 10px;border-bottom:1px solid #eef1f6;white-space:nowrap}
+table.grid tr:hover td{background:#f3f7fd;cursor:pointer}
+.id{color:var(--gold);font-weight:bold;font-size:12px}
+.pill{display:inline-block;padding:3px 9px;border-radius:11px;font-size:11px;font-weight:bold}
+.pay{font-weight:bold;color:var(--greent)}
+.empty{padding:40px;text-align:center;color:var(--muted)}
+.overlay.hidden{display:none}
+.overlay{position:fixed;inset:0;background:rgba(10,18,35,.55);display:flex;align-items:center;justify-content:center;padding:18px 14px;z-index:50}
+.modal{background:#fff;border-radius:10px;width:100%;max-width:760px;box-shadow:0 20px 50px rgba(0,0,0,.3);display:flex;flex-direction:column;max-height:calc(100vh - 36px)}
+.modal header{background:var(--navy);border-radius:10px 10px 0 0;border-bottom:4px solid var(--gold);display:flex;align-items:center;justify-content:space-between;flex:none;padding-right:8px}
+.modal header .x{background:transparent;border:0;color:#fff;font-size:26px;line-height:1;cursor:pointer;padding:2px 10px}
+.modal header .x:hover{color:var(--gold)}
+.modal .body{padding:18px 20px;overflow-y:auto;flex:1 1 auto}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field.full{grid-column:1/-1}
+.field label{font-size:12px;color:var(--muted);font-weight:bold}
+.field input,.field select,.field textarea{padding:8px 10px;border:1px solid var(--line);border-radius:6px;font-size:13px;font-family:inherit}
+.field textarea{resize:vertical;min-height:54px}
+.auto{background:var(--goldf);border:1px solid var(--gold);border-radius:6px;padding:8px 10px;font-size:12px;color:#3A3120;display:flex;gap:18px;flex-wrap:wrap;margin-top:6px}
+.auto b{color:var(--navy)}
+.modal .foot{padding:14px 20px;border-top:1px solid var(--line);display:flex;gap:8px;justify-content:flex-end}
+.modal .foot{flex:none;background:#fff;border-radius:0 0 10px 10px}
+button.del{background:#fff;color:var(--redt);border:1px solid var(--redt);margin-right:auto}
+.doc{background:#fff;border:1px solid var(--line);border-radius:8px;padding:20px 24px;line-height:1.55}
+.doc h3{color:var(--gold);margin:18px 0 6px;font-size:14px}
+.doc p{margin:4px 0}
+.doc a{color:var(--navy2)}
+.savemsg{font-size:12px;color:var(--muted)}
+@media(max-width:640px){.formgrid{grid-template-columns:1fr}.mini{grid-template-columns:1fr}.brand .logo{height:38px}}
+.histWrap{margin-top:14px;border-top:1px solid var(--line);padding-top:10px}
+.histTitle{font-size:12px;font-weight:bold;color:var(--gold);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.histEntry{border-left:2px solid var(--line);padding:0 0 8px 12px;margin-left:4px}
+.histTs{font-size:11px;color:var(--muted);font-weight:bold;margin-bottom:2px}
+.histLine{font-size:12.5px;color:#333;margin:2px 0}
+.histLine.funil{background:var(--goldf);border-radius:4px;padding:2px 6px;color:#3A3120;font-weight:bold}
+.histEmpty{font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 640 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CHR">
+      <text x="30" y="196" font-family="Arial, sans-serif" font-weight="bold" font-size="172" letter-spacing="6" fill="#FFFFFF">CHR</text>
+      <line x1="196" y1="206" x2="432.4" y2="88.7" stroke="#16243E" stroke-width="30" stroke-linecap="round"/>
+      <line x1="196" y1="206" x2="432.4" y2="88.7" stroke="#FFFFFF" stroke-width="15" stroke-linecap="round"/>
+      <polygon points="473.6,68.2 445.7,115.5 419.0,61.8" fill="#16243E" stroke="#16243E" stroke-width="14" stroke-linejoin="round"/>
+      <polygon points="473.6,68.2 445.7,115.5 419.0,61.8" fill="#FFFFFF"/>
+    </svg>
+    <div>
+      <h1>CHR Assessoria Comercial · CRM — SDR</h1>
+      <div class="sub">Prospecção, qualificação e agendamento · foco varejo</div>
+    </div>
+  </div>
+  <div class="sub">gestao@mentoriachr.com · (62) 9.9918-2876</div>
+</header>
+<nav>
+  <button data-tab="painel" class="active">Painel</button>
+  <button data-tab="leads">Leads</button>
+  <button data-tab="instr">Instruções</button>
+</nav>
+
+<main>
+<section id="painel">
+  <h2>Painel</h2>
+  <div class="tag">Funil</div>
+  <div class="cards">
+    <div class="card"><div class="lbl">Leads na base</div><div class="val" id="m_leads">0</div></div>
+    <div class="card"><div class="lbl">Qualificados</div><div class="val" id="m_qual">0</div></div>
+    <div class="card"><div class="lbl">Reuniões agendadas</div><div class="val" id="m_agen">0</div></div>
+    <div class="card"><div class="lbl">Confirmadas (véspera)</div><div class="val" id="m_conf">0</div></div>
+    <div class="card"><div class="lbl">Realizadas</div><div class="val" id="m_real">0</div></div>
+    <div class="card hl"><div class="lbl">Valor a receber (R$50 × confirmadas)</div><div class="val" id="m_valor">R$ 0</div></div>
+  </div>
+  <div class="tag">Conversões &amp; follow-up</div>
+  <div class="cards">
+    <div class="card"><div class="lbl">Taxa de agendamento</div><div class="val" id="m_t1">0%</div></div>
+    <div class="card"><div class="lbl">Taxa de confirmação</div><div class="val" id="m_t2">0%</div></div>
+    <div class="card"><div class="lbl">Taxa de comparecimento</div><div class="val" id="m_t3">0%</div></div>
+    <div class="card warn"><div class="lbl">Follow-ups atrasados</div><div class="val" id="m_atr">0</div></div>
+    <div class="card"><div class="lbl">Follow-ups para hoje</div><div class="val" id="m_hoje">0</div></div>
+  </div>
+  <div class="mini">
+    <div><div class="tag">Por etapa do pipeline</div><table id="t_etapa"></table></div>
+    <div><div class="tag">Por produto indicado</div><table id="t_prod"></table></div>
+  </div>
+</section>
+
+<section id="leads" class="hidden">
+  <h2>Leads</h2>
+  <div class="toolbar">
+    <input type="text" id="search" placeholder="Buscar loja, contato, telefone…">
+    <select id="fEtapa"><option value="">Todas as etapas</option></select>
+    <select id="fAlerta">
+      <option value="">Todos os alertas</option>
+      <option value="ATRASADO">⚠ Atrasados</option>
+      <option value="HOJE">● Para hoje</option>
+      <option value="Em dia">Em dia</option>
+      <option value="Sem data">Sem data</option>
+    </select>
+    <div class="spacer"></div>
+    <button class="btn gold" id="btnNew">+ Novo lead</button>
+    <button class="btn ghost" id="btnExportJ">Backup ⤓</button>
+    <button class="btn ghost" id="btnImport">Restaurar ⤒</button>
+    <button class="btn ghost" id="btnCsv">CSV</button>
+    <input type="file" id="fileImp" accept=".json" class="hidden">
+  </div>
+  <div class="tablewrap">
+    <table class="grid">
+      <thead><tr>
+        <th>ID</th><th>Loja / Empresa</th><th>Contato</th><th>Telefone</th><th>Etapa</th>
+        <th>Produto</th><th>Qualif.</th><th>Últ. contato</th><th>Próx. follow-up</th>
+        <th>Reunião</th><th>Confirm.</th><th>Pagto</th><th>Alerta</th>
+      </tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+  <div class="empty" id="emptyMsg" style="display:none">Nenhum lead ainda. Clique em <b>+ Novo lead</b> para começar.</div>
+  <p class="savemsg" id="saveMsg" style="margin-top:10px"></p>
+</section>
+
+<section id="instr" class="hidden">
+  <h2>Como usar</h2>
+  <div class="doc">
+    <h3>Fluxo diário</h3>
+    <p>1) Na aba <b>Leads</b>, filtre o Alerta por <b>Atrasados</b> e <b>Para hoje</b> — essa é a sua fila de ligações.</p>
+    <p>2) Ligou? Abra o lead, atualize a <b>Etapa</b>, o <b>Último contato</b>, o <b>Nº de tentativas</b> e defina o <b>Próximo follow-up</b>.</p>
+    <p>3) Agendou? Preencha a <b>Reunião</b> e mude a etapa para <b>Agendado</b>. Confirmou na véspera? Coloque <b>Confirmada véspera = Sim</b>.</p>
+    <h3>Pipeline</h3>
+    <p>Novo → Em contato → Qualificado → Agendado → Confirmado → Realizado. Use <b>Retornar</b> (ligar depois) ou <b>Descartado</b> (sem perfil).</p>
+    <h3>Campos automáticos</h3>
+    <p>O <b>ID</b>, o <b>Pagamento</b> (R$ 50 quando confirmada = Sim) e o <b>Alerta</b> de follow-up são calculados sozinhos. O alerta vira ATRASADO, HOJE ou Em dia conforme o próximo follow-up.</p>
+    <h3>Pagamento</h3>
+    <p>A reunião vale R$ 50 quando confirmada na véspera — conta mesmo com no-show no dia.</p>
+    <h3>Histórico e rastreabilidade</h3>
+    <p>Toda alteração no lead fica registrada com data e hora. Abra um lead e role até <b>Histórico de alterações</b> para ver tudo o que mudou — os movimentos de <b>funil (etapa)</b> aparecem destacados em dourado. O histórico completo também sai na exportação <b>CSV</b> (coluna Historico).</p>
+    <h3>Agenda do Christopher</h3>
+    <p><a href="https://calendar.app.google/uX3Zc5ZX3XVCJ1ei7" target="_blank">https://calendar.app.google/uX3Zc5ZX3XVCJ1ei7</a></p>
+  </div>
+</section>
+</main>
+
+<div class="overlay hidden" id="overlay">
+  <div class="modal">
+    <header><h1 id="mTitle">Novo lead</h1><button class="x" id="btnX" type="button" title="Fechar">×</button></header>
+    <div class="body">
+      <div class="formgrid">
+        <div class="field"><label>Loja / Empresa *</label><input id="f_loja"></div>
+        <div class="field"><label>Contato</label><input id="f_contato"></div>
+        <div class="field"><label>Cargo</label><select id="f_cargo"></select></div>
+        <div class="field"><label>Telefone / WhatsApp</label><input id="f_tel"></div>
+        <div class="field"><label>Segmento</label><input id="f_seg"></div>
+        <div class="field"><label>Origem</label><select id="f_origem"></select></div>
+        <div class="field"><label>Etapa (pipeline)</label><select id="f_etapa"></select></div>
+        <div class="field"><label>Produto indicado</label><select id="f_prod"></select></div>
+        <div class="field"><label>Qualificado?</label><select id="f_qual"></select></div>
+        <div class="field"><label>Decisor?</label><select id="f_dec"></select></div>
+        <div class="field full"><label>Dor principal identificada</label><input id="f_dor"></div>
+        <div class="field"><label>Último contato</label><input type="date" id="f_ult"></div>
+        <div class="field"><label>Nº de tentativas</label><input type="number" min="0" id="f_tent"></div>
+        <div class="field"><label>Próximo follow-up</label><input type="date" id="f_prox"></div>
+        <div class="field"><label>Reunião (data/hora)</label><input id="f_reuni" placeholder="ex: 02/07 14:00"></div>
+        <div class="field"><label>Confirmada véspera?</label><select id="f_conf"></select></div>
+        <div class="field"><label>Compareceu?</label><select id="f_comp"></select></div>
+        <div class="field full"><label>Observações / próximo passo</label><textarea id="f_obs"></textarea></div>
+      </div>
+      <div class="auto">
+        <span>ID: <b id="a_id">—</b></span>
+        <span>Pagamento: <b id="a_pay">—</b></span>
+        <span>Alerta follow-up: <b id="a_alerta">—</b></span>
+      </div>
+      <div class="histWrap" id="histWrap">
+        <div class="histTitle">Histórico de alterações</div>
+        <div id="histList"></div>
+      </div>
+    </div>
+    <div class="foot">
+      <button class="del hidden" id="btnDel">Excluir</button>
+      <button class="btn ghost" id="btnCancel">Cancelar</button>
+      <button class="btn" id="btnSave">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY="crm_chr_leads_v1", CKEY="crm_chr_counter_v1";
+const ETAPAS=["Novo","Em contato","Qualificado","Agendado","Confirmado","Realizado","Retornar","Descartado"];
+const PRODUTOS=["Palestra/Treinamento","Formação de Vendas","Mentoria","Assessoria","Serviço Pontual","A definir"];
+const ETAPA_COR={Novo:"#DCE6F1","Em contato":"#EAF1FB",Qualificado:"#FFF2CC",Agendado:"#D6E4F5",Confirmado:"#D8EAD3",Realizado:"#C6E0B4",Retornar:"#F4ECD8",Descartado:"#E6E6E6"};
+let storageOK=true;
+let leads=load(), counter=loadCounter(), editId=null;
+
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch(e){storageOK=false;return[]}}
+function loadCounter(){try{return +(localStorage.getItem(CKEY)||0)}catch(e){return leads&&leads.length?leads.length:0}}
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(leads));localStorage.setItem(CKEY,counter);storageOK=true;}
+  catch(e){storageOK=false;}
+  flash();
+}
+function flash(){
+  const m=document.getElementById("saveMsg");if(!m)return;
+  if(storageOK){m.style.color="";m.textContent="✓ Salvo no navegador ("+leads.length+" leads) — "+new Date().toLocaleString("pt-BR");}
+  else{m.style.color="#C0392B";m.textContent="⚠ Este navegador está bloqueando o armazenamento (modo privado/preview). Seus "+leads.length+" leads valem nesta sessão — use o botão Backup ⤓ para não perder os dados.";}
+}
+function todayStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function brl(n){return "R$ "+n.toLocaleString("pt-BR");}
+function fmtDate(s){if(!s)return"";const p=s.split("-");return p.length===3?p[2]+"/"+p[1]+"/"+p[0]:s;}
+function alerta(l){
+  if(l.etapa==="Realizado"||l.etapa==="Descartado")return"—";
+  if(!l.prox)return"Sem data";
+  const t=todayStr();
+  if(l.prox<t)return"ATRASADO";
+  if(l.prox===t)return"HOJE";
+  return"Em dia";
+}
+function pay(l){return l.conf==="Sim"?50:0;}
+
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  ["painel","leads","instr"].forEach(id=>document.getElementById(id).classList.add("hidden"));
+  document.getElementById(b.dataset.tab).classList.remove("hidden");
+  if(b.dataset.tab==="painel")renderPainel();
+});
+
+function opt(sel,arr,blank){sel.innerHTML=(blank?'<option value=""></option>':"")+arr.map(v=>'<option>'+v+'</option>').join("");}
+opt(document.getElementById("f_cargo"),["","Dono","Gerente","Comprador","Outro"]);
+opt(document.getElementById("f_origem"),["","Carteira","Indicação","Instagram","Outro"]);
+opt(document.getElementById("f_etapa"),ETAPAS);
+opt(document.getElementById("f_prod"),PRODUTOS);
+opt(document.getElementById("f_qual"),["","Sim","Não"]);
+opt(document.getElementById("f_dec"),["","Sim","Não"]);
+opt(document.getElementById("f_conf"),["","Sim","Não","Pendente"]);
+opt(document.getElementById("f_comp"),["","Sim","Não","—"]);
+document.getElementById("fEtapa").innerHTML='<option value="">Todas as etapas</option>'+ETAPAS.map(v=>'<option>'+v+'</option>').join("");
+
+function esc(s){return(s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function renderLeads(){
+  const q=document.getElementById("search").value.toLowerCase();
+  const fE=document.getElementById("fEtapa").value, fA=document.getElementById("fAlerta").value;
+  const tb=document.getElementById("rows");tb.innerHTML="";
+  const list=leads.filter(l=>{
+    const hay=((l.loja||"")+" "+(l.contato||"")+" "+(l.tel||"")).toLowerCase();
+    if(q&&!hay.includes(q))return false;
+    if(fE&&l.etapa!==fE)return false;
+    if(fA&&alerta(l)!==fA)return false;
+    return true;
+  });
+  document.getElementById("emptyMsg").style.display=leads.length?"none":"block";
+  list.forEach(l=>{
+    const a=alerta(l), p=pay(l);
+    let aStyle="";
+    if(a==="ATRASADO")aStyle="background:var(--redf);color:var(--redt)";
+    else if(a==="HOJE")aStyle="background:var(--goldf);color:#3A3120";
+    else if(a==="Sem data")aStyle="background:#FCE5CD;color:#7a5";
+    const tr=document.createElement("tr");
+    tr.onclick=()=>openEdit(l.id);
+    tr.innerHTML='<td class="id">'+l.id+'</td><td>'+esc(l.loja)+'</td><td>'+esc(l.contato||"")+'</td>'
+      +'<td>'+esc(l.tel||"")+'</td>'
+      +'<td><span class="pill" style="background:'+(ETAPA_COR[l.etapa]||"#eee")+'">'+(l.etapa||"")+'</span></td>'
+      +'<td>'+esc(l.prod||"")+'</td><td style="text-align:center">'+(l.qual||"")+'</td>'
+      +'<td>'+fmtDate(l.ult)+'</td><td>'+fmtDate(l.prox)+'</td><td>'+esc(l.reuni||"")+'</td>'
+      +'<td style="text-align:center">'+(l.conf||"")+'</td>'
+      +'<td class="pay">'+(p?brl(p):"—")+'</td>'
+      +'<td><span class="pill" style="'+aStyle+'">'+a+'</span></td>';
+    tb.appendChild(tr);
+  });
+}
+
+function renderPainel(){
+  const n=leads.length;
+  const qual=leads.filter(l=>l.qual==="Sim").length;
+  const agen=leads.filter(l=>l.reuni&&l.reuni.trim()).length;
+  const conf=leads.filter(l=>l.conf==="Sim").length;
+  const real=leads.filter(l=>l.comp==="Sim").length;
+  set("m_leads",n);set("m_qual",qual);set("m_agen",agen);set("m_conf",conf);set("m_real",real);
+  set("m_valor",brl(conf*50));
+  set("m_t1",pct(agen,n));set("m_t2",pct(conf,agen));set("m_t3",pct(real,conf));
+  set("m_atr",leads.filter(l=>alerta(l)==="ATRASADO").length);
+  set("m_hoje",leads.filter(l=>alerta(l)==="HOJE").length);
+  document.getElementById("t_etapa").innerHTML=ETAPAS.map(e=>'<tr><td>'+e+'</td><td>'+leads.filter(l=>l.etapa===e).length+'</td></tr>').join("");
+  document.getElementById("t_prod").innerHTML=PRODUTOS.map(p=>'<tr><td>'+p+'</td><td>'+leads.filter(l=>l.prod===p).length+'</td></tr>').join("");
+}
+function set(id,v){document.getElementById(id).textContent=v;}
+function pct(a,b){return b?Math.round(a/b*1000)/10+"%":"0%";}
+
+const ov=document.getElementById("overlay");
+function openNew(){
+  editId=null;document.getElementById("mTitle").textContent="Novo lead";
+  document.getElementById("btnDel").classList.add("hidden");
+  ["f_loja","f_contato","f_tel","f_seg","f_dor","f_reuni","f_obs","f_tent","f_ult","f_prox"].forEach(id=>document.getElementById(id).value="");
+  ["f_cargo","f_origem","f_prod","f_qual","f_dec","f_conf","f_comp"].forEach(id=>document.getElementById(id).value="");
+  document.getElementById("f_etapa").value="Novo";
+  document.getElementById("histWrap").style.display="none";updAuto();ov.classList.remove("hidden");
+}
+function openEdit(id){
+  const l=leads.find(x=>x.id===id);if(!l)return;editId=id;
+  document.getElementById("mTitle").textContent="Editar "+id;
+  document.getElementById("btnDel").classList.remove("hidden");
+  g("f_loja",l.loja);g("f_contato",l.contato);g("f_cargo",l.cargo);g("f_tel",l.tel);g("f_seg",l.seg);
+  g("f_origem",l.origem);g("f_etapa",l.etapa);g("f_prod",l.prod);g("f_qual",l.qual);g("f_dec",l.dec);
+  g("f_dor",l.dor);g("f_ult",l.ult);g("f_tent",l.tent);g("f_prox",l.prox);g("f_reuni",l.reuni);
+  g("f_conf",l.conf);g("f_comp",l.comp);g("f_obs",l.obs);
+  renderHist(l);updAuto();ov.classList.remove("hidden");
+}
+function g(id,v){document.getElementById(id).value=v||"";}
+function v(id){return document.getElementById(id).value;}
+function collect(){
+  return{loja:v("f_loja"),contato:v("f_contato"),cargo:v("f_cargo"),tel:v("f_tel"),seg:v("f_seg"),
+    origem:v("f_origem"),etapa:v("f_etapa"),prod:v("f_prod"),qual:v("f_qual"),dec:v("f_dec"),
+    dor:v("f_dor"),ult:v("f_ult"),tent:v("f_tent"),prox:v("f_prox"),reuni:v("f_reuni"),
+    conf:v("f_conf"),comp:v("f_comp"),obs:v("f_obs")};
+}
+function updAuto(){
+  const tmp=collect();
+  document.getElementById("a_id").textContent=editId||("L"+String(counter+1).padStart(3,"0"));
+  document.getElementById("a_pay").textContent=pay(tmp)?brl(50):"—";
+  document.getElementById("a_alerta").textContent=alerta(tmp);
+}
+const FIELDS={loja:"Loja",contato:"Contato",cargo:"Cargo",tel:"Telefone",seg:"Segmento",origem:"Origem",etapa:"Etapa (funil)",prod:"Produto",qual:"Qualificado",dec:"Decisor",dor:"Dor",ult:"Último contato",tent:"Nº tentativas",prox:"Próximo follow-up",reuni:"Reunião",conf:"Confirmada véspera",comp:"Compareceu",obs:"Observações"};
+function nowStr(){return new Date().toLocaleString("pt-BR");}
+function logChanges(lead,nv){
+  if(!lead.hist)lead.hist=[];
+  const ch=[];
+  for(const k in FIELDS){const a=(lead[k]||""),b=(nv[k]||"");if(a!==b)ch.push({campo:FIELDS[k],de:a,para:b,funil:k==="etapa"});}
+  if(ch.length)lead.hist.push({ts:nowStr(),changes:ch});
+}
+function renderHist(lead){
+  const wrap=document.getElementById("histWrap"),list=document.getElementById("histList");
+  if(!wrap)return;
+  wrap.style.display="block";
+  const h=(lead&&lead.hist)?lead.hist:[];
+  if(!h.length){list.innerHTML='<div class="histEmpty">Sem alterações registradas ainda.</div>';return;}
+  list.innerHTML=h.slice().reverse().map(e=>{
+    let body;
+    if(e.tipo==="criação"){body='<div class="histLine funil">⮕ Lead criado · etapa inicial: '+esc(e.etapa||"")+'</div>';}
+    else{body=(e.changes||[]).map(c=>'<div class="histLine'+(c.funil?" funil":"")+'">'+(c.funil?"⮕ ":"• ")+"<b>"+c.campo+":</b> "+(c.de?esc(c.de):"—")+" → "+(c.para?esc(c.para):"—")+"</div>").join("");}
+    return '<div class="histEntry"><div class="histTs">'+e.ts+'</div>'+body+'</div>';
+  }).join("");
+}
+function histText(l){
+  return ((l.hist)||[]).map(e=>e.ts+" — "+(e.tipo==="criação"?("Lead criado ("+(e.etapa||"")+")"):((e.changes||[]).map(c=>c.campo+": "+(c.de||"—")+"→"+(c.para||"—")).join(" | ")))).join("  ||  ");
+}
+["f_etapa","f_prox","f_conf"].forEach(id=>document.getElementById(id).addEventListener("change",updAuto));
+document.getElementById("btnNew").onclick=openNew;
+function closeModal(){ov.classList.add("hidden");}
+document.getElementById("btnCancel").onclick=closeModal;
+document.getElementById("btnX").onclick=closeModal;
+ov.onclick=e=>{if(e.target===ov)closeModal();};
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!ov.classList.contains("hidden"))closeModal();});
+document.getElementById("btnSave").onclick=()=>{
+  const data=collect();
+  if(!data.loja.trim()){alert("Preencha a Loja / Empresa.");return;}
+  if(editId){const lead=leads.find(x=>x.id===editId);logChanges(lead,data);Object.assign(lead,data);}
+  else{counter++;data.id="L"+String(counter).padStart(3,"0");data.hist=[{ts:nowStr(),tipo:"criação",etapa:data.etapa}];leads.push(data);}
+  ov.classList.add("hidden");
+  save();renderLeads();renderPainel();
+};
+document.getElementById("btnDel").onclick=()=>{
+  if(!editId)return;if(!confirm("Excluir este lead?"))return;
+  leads=leads.filter(x=>x.id!==editId);
+  ov.classList.add("hidden");
+  save();renderLeads();renderPainel();
+};
+
+["search","fEtapa","fAlerta"].forEach(id=>document.getElementById(id).addEventListener("input",renderLeads));
+
+function dl(name,content,type){
+  const b=new Blob([content],{type});const u=URL.createObjectURL(b);
+  const a=document.createElement("a");a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);
+}
+document.getElementById("btnExportJ").onclick=()=>{
+  dl("crm_chr_backup_"+todayStr()+".json",JSON.stringify({counter,leads},null,2),"application/json");
+};
+document.getElementById("btnImport").onclick=()=>document.getElementById("fileImp").click();
+document.getElementById("fileImp").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result);
+    if(!confirm("Restaurar backup? Isso substitui os dados atuais ("+leads.length+" leads)."))return;
+    leads=d.leads||[];counter=d.counter||leads.length;save();renderLeads();renderPainel();
+    alert("Backup restaurado: "+leads.length+" leads.");
+  }catch(err){alert("Arquivo inválido.");}};
+  r.readAsText(f);e.target.value="";
+};
+document.getElementById("btnCsv").onclick=()=>{
+  const head=["ID","Loja","Contato","Cargo","Telefone","Segmento","Origem","Etapa","Dor","Produto","Qualificado","Decisor","UltimoContato","Tentativas","ProximoFollowup","Reuniao","Confirmada","Compareceu","Pagamento","Alerta","Obs","Historico"];
+  const rows=leads.map(l=>[l.id,l.loja,l.contato,l.cargo,l.tel,l.seg,l.origem,l.etapa,l.dor,l.prod,l.qual,l.dec,l.ult,l.tent,l.prox,l.reuni,l.conf,l.comp,pay(l),alerta(l),l.obs,histText(l)]
+    .map(c=>'"'+String(c==null?"":c).replace(/"/g,'""')+'"').join(","));
+  dl("crm_chr_leads_"+todayStr()+".csv","﻿"+[head.join(","),...rows].join("\n"),"text/csv");
+};
+
+renderLeads();renderPainel();flash();
+</script>
+</body>
+</html>
