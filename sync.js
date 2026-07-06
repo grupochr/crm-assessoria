@@ -1,18 +1,9 @@
-/* === SYNC - Firebase RTDB (sincronizacao aberta entre dispositivos) ===
-   Espelha o estado local do painel (localStorage) num no compartilhado no
-   Firebase, para que todos os aparelhos vejam a mesma versao.
-
-   COMO USAR (substitua os 2 placeholders):
-   - https://jornada-v8-default-rtdb.firebaseio.com/crm-assessoria.json  : URL completa do no do site, terminando em .json
-                   ex.: https://jornada-v8-default-rtdb.firebaseio.com/MEU_SITE.json
-   - ["crm_chr_leads_v1","crm_chr_counter_v1"]    : array com as chaves de localStorage que o painel usa
-                   ex.: ["chave_a","chave_b","chave_c"]
-*/
+/* === SYNC - Firebase RTDB (sincronizacao entre dispositivos) ===
+   Espelha o estado local do CRM (localStorage) num no compartilhado no Firebase. */
 (function(){
-  var URL  = "https://jornada-v8-default-rtdb.firebaseio.com/crm-assessoria.json";
+  var URL  = "https://crm-sdr-1d6f4-default-rtdb.firebaseio.com/crm-assessoria.json";
   var KEYS = ["crm_chr_leads_v1","crm_chr_counter_v1"];
 
-  // PULL inicial (sincrono): traz o estado remoto antes do painel iniciar
   try {
     var x = new XMLHttpRequest();
     x.open("GET", URL, false);
@@ -34,17 +25,14 @@
     } catch (e) {}
   }
 
-  // PUSH ao alterar (agrupando mudancas)
   var tmr = null;
   localStorage.setItem = function(k, v){
     origSet(k, v);
     if (KEYS.indexOf(k) >= 0) { clearTimeout(tmr); tmr = setTimeout(push, 700); }
   };
 
-  // semeia o remoto com o estado atual (cobre o primeiro uso)
   setTimeout(push, 1800);
 
-  // PULL automatico a cada 15s: traz alteracoes de outros aparelhos
   function sig(){ return KEYS.map(function(k){ return localStorage.getItem(k); }).join(""); }
   setInterval(function(){
     if (document.hidden) return;
@@ -57,9 +45,7 @@
         if (g.status >= 200 && g.status < 300 && g.responseText && g.responseText !== "null") {
           try {
             var rem = JSON.parse(g.responseText) || {}, before = sig(), changed = false;
-            KEYS.forEach(function(k){
-              if (rem[k] != null && rem[k] !== localStorage.getItem(k)) { origSet(k, rem[k]); changed = true; }
-            });
+            KEYS.forEach(function(k){ if (rem[k] != null && rem[k] !== localStorage.getItem(k)) { origSet(k, rem[k]); changed = true; } });
             if (changed && sig() !== before) { location.reload(); }
           } catch (e) {}
         }
